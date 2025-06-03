@@ -1,13 +1,22 @@
 const express = require('express');
+const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const YOUTUBE_VIDEO = 'https://www.youtube.com/watch?v=6eZP8X4VtJc';
+// YouTube-Link aus config.json laden
+let youtubeLink = '';
+try {
+  const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
+  youtubeLink = config.youtubeLink;
+} catch (error) {
+  console.error('❌ Fehler beim Laden der config.json:', error.message);
+  youtubeLink = 'https://www.youtube.com/'; // Fallback
+}
 
 app.get('/go', (req, res) => {
   const user = req.query.ref || 'unknown';
-  console.log(`🎯 Klick von: ${user} → Weiterleitung zum YouTube-Video`);
-  res.redirect(YOUTUBE_VIDEO);
+  console.log(`🎯 Klick von: ${user} → Weiterleitung zu: ${youtubeLink}`);
+  res.redirect(youtubeLink);
 });
 
 app.get('/', (req, res) => {
